@@ -1,92 +1,88 @@
-const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
-
-const app = express();
-app.use(express.json());
-app.use(cors());
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // definindo o modelo Residencia
 const Residencia = mongoose.model('residencias', {
-  nome: String,
-  tipo: String,
-  capacidade: String,
-  diretor: [String],
-  rua: String,
-  numero: String,
-  bairro: String,
-  cep: String,
-  cidade: String,
-  estado: String,
-  status: String
+        nome: String,
+        tipo: String,
+        capacidade: String,
+        diretor: [String],
+        rua: String,
+        numero: String,
+        bairro: String,
+        cep: String,
+        cidade: String,
+        estado: String,
+        status: String
 });
 
 //definindo o modelo Residente
 const Residente = mongoose.model('residentes', {
-  uid: String,
-  nome: String,
-  cpf: String,
-  data_nascimento: String,
-  sexo: String,
-  email: String,
-  telefone: String,
-  contato_emergencia_nome: String,
-  conteto_emergencia_parentesco: String,
-  contato_emergencia_telefone: String,
-  rua: String,
-  numero: String,
-  bairro: String,
-  cep: String,
-  cidade: String,
-  estado: String,
-  residencia: [String],
-  apartamento: [String],
-  numero_quarto: [String],
-  data_entrada: [String],
-  data_saida: [String],
-  acesso: String,
-  historico_data: [String],
-  historico_sentido: [String],
-  historico_permissao: [String],
+        uid: String,
+        nome: String,
+        cpf: String,
+        data_nascimento: String,
+        sexo: String,
+        email: String,
+        telefone: String,
+        contato_emergencia_nome: String,
+        conteto_emergencia_parentesco: String,
+        contato_emergencia_telefone: String,
+        rua: String,
+        numero: String,
+        bairro: String,
+        cep: String,
+        cidade: String,
+        estado: String,
+        residencia: [String],
+        apartamento: [String],
+        numero_quarto: [String],
+        data_entrada: [String],
+        data_saida: [String],
+        acesso: String,
+        historico_data: [String],
+        historico_sentido: [String],
+        historico_permissao: [String],
 })
 
 //definindo o modelo visitante
 const Visitante = mongoose.model('visitantes', {
-  nome: String,
-  cpf: String,
-  cpf_responsavel: String,
-  residencia: String,
-  apartamento: String,
-  numero_quarto: String,
-  data_entrada: String,
-  data_saida: String,
-  acesso: String,
+        nome: String,
+        cpf: String,
+        cpf_responsavel: String,
+        residencia: String,
+        apartamento: String,
+        numero_quarto: String,
+        data_entrada: String,
+        data_saida: String,
+        acesso: String,
 });
 
 //definindo o modelo funcionário
 const Funcionario = mongoose.model('funcionarios', {
-  senha: String,
-  usuario: String
+        senha: String,
+        usuario: String
 });
 
-//definindo o modelo cartões
+
 const Cartoes = mongoose.model('cartoes', {
-  residencia: String,
-  list_of_cards: [
-    {
-      uid: String,
-      nome: String
-    }
-  ]
+        residencia:String,
+        objects:[{
+                uid:String,
+                nome:String
+        }]
 });
 
-// conectando o Mongoose com o MongoDB
-mongoose.connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Conexão bem sucedida com o MongoDB'))
-  .catch((error) => console.log('Erro ao conectar com o MongoDB:', error));
+const app = express();
+app.use(bodyParser.json());
 
-// definindo as rotas da API
+const db_string = "mongodb+srv://Kauan_Prog:Kauandbs159753.@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority";
+
+mongoose.connect(db_string,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 //Rotas das residências
 app.get('/residencias', async (_req, res) => {
@@ -290,7 +286,6 @@ app.delete('/cartoes/:id', async (req, res) => {
   }
 });
 
-// iniciando o servidor
-app.listen(3000, () => {
-  console.log('Servidor iniciado na porta 3000');
-});
+const port = process.env.PORT || 3000;
+app.listen(port);
+console.log(`Servidor Hospedado na Porta ${port}`);
