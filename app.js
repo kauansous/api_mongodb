@@ -1,163 +1,95 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // definindo o modelo Residencia
 const Residencia = mongoose.model('residencias', {
-        nome: String,
-        tipo: String,
-        capacidade: String,
-        diretor: [String],
-        rua: String,
-        numero: String,
-        bairro: String,
-        cep: String,
-        cidade: String,
-        estado: String,
-        status: String
+  nome: String,
+  tipo: String,
+  capacidade: String,
+  diretor: [String],
+  rua: String,
+  numero: String,
+  bairro: String,
+  cep: String,
+  cidade: String,
+  estado: String,
+  status: String
 });
 
 //definindo o modelo Residente
 const Residente = mongoose.model('residentes', {
-        uid: String,
-        nome: String,
-        cpf: String,
-        data_nascimento: String,
-        sexo: String,
-        email: String,
-        telefone: String,
-        contato_emergencia_nome: String,
-        conteto_emergencia_parentesco: String,
-        contato_emergencia_telefone: String,
-        rua: String,
-        numero: String,
-        bairro: String,
-        cep: String,
-        cidade: String,
-        estado: String,
-        residencia: [String],
-        apartamento: [String],
-        numero_quarto: [String],
-        data_entrada: [String],
-        data_saida: [String],
-        acesso: String,
-        historico_data: [String],
-        historico_sentido: [String],
-        historico_permissao: [String],
+  uid: String,
+  nome: String,
+  cpf: String,
+  data_nascimento: String,
+  sexo: String,
+  email: String,
+  telefone: String,
+  contato_emergencia_nome: String,
+  conteto_emergencia_parentesco: String,
+  contato_emergencia_telefone: String,
+  rua: String,
+  numero: String,
+  bairro: String,
+  cep: String,
+  cidade: String,
+  estado: String,
+  residencia: [String],
+  apartamento: [String],
+  numero_quarto: [String],
+  data_entrada: [String],
+  data_saida: [String],
+  acesso: String,
+  historico_data: [String],
+  historico_sentido: [String],
+  historico_permissao: [String],
 })
 
 //definindo o modelo visitante
 const Visitante = mongoose.model('visitantes', {
-        nome: String,
-        cpf: String,
-        cpf_responsavel: String,
-        residencia: String,
-        apartamento: String,
-        numero_quarto: String,
-        data_entrada: String,
-        data_saida: String,
-        acesso: String,
+  nome: String,
+  cpf: String,
+  cpf_responsavel: String,
+  residencia: String,
+  apartamento: String,
+  numero_quarto: String,
+  data_entrada: String,
+  data_saida: String,
+  acesso: String,
 });
 
 //definindo o modelo funcionário
 const Funcionario = mongoose.model('funcionarios', {
-        senha: String,
-        usuario: String
+  senha: String,
+  usuario: String
 });
 
 
 const Cartoes = mongoose.model('cartoes', {
-        residencia:String,
-        objects:[{
-                uid:String,
-                nome:String
-        }]
+  residencia: String,
+  objects: [{
+    uid: String,
+    nome: String
+  }]
 });
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/json' }));
+app.use(cors());
 
 const db_string = "mongodb+srv://Kauan_Prog:Kauandbs159753.@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority";
 
-mongoose.connect(db_string,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+mongoose.connect(db_string, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-function FormatedData(unix){
-    unix = new Date(unix*1000).toLocaleString("pt-BR");
-    return unix;
+function FormatedData(unix) {
+  unix = new Date(unix * 1000).toLocaleString("pt-BR");
+  return unix;
 };
-
-
-app.post('/post', async (req, res) => {
-
-    let uid, data, permissao, sentido;
-    for(let i=0; i<req.body.length;i++){
-        
-        uid = req.body[i].uid;
-        data = req.body[i].data;
-        sentido = req.body[i].sentido;
-        permissao = req.body[i].permissao;
-
-        console.log(`UID ${uid} ; DATA ${data} ; SENTIDO ${sentido} ; PERMISSAO ${permissao}`);
-        try{
-                Residente.findOneAndUpdate(
-                        {UID:uid},
-                        {$push: {
-                                HistóricoData: FormatedData(data),
-                                HistóricoSentido: sentido,
-                                HistóricoPermissão: permissao
-                        }}, async (err, documento) => {
-                                if(err){
-                                        console.log(err);
-                                }else{
-                                        if(i==req.body.length-1){
-                                                console.log("Todos os documentos atualizados");
-                                                return res.status(200).send("Operação feita com sucesso (CODE :200)");
-                                        }; //caso queria ver o documento, so atualizar por "documento"
-                                }
-                        }
-                );
-        }catch(err){
-                console.log(err);
-                return res.status(-1).send("Erro interno do servidor");
-        };
-    }
-});
-
-
-app.get('/get', async (req, res) => {
-
-    const dispositivo = req.query.residencia
-    
-    //console.log(dispositivo)
-
-    const data = await Cartoes.findOne({ residencia:dispositivo}); 
-    const obj = data.objects
-
-    //console.log(obj);
-
-    let historico = [];
-    for(let i=0; i<obj.length; i++){
-        
-        let new_data = {};
-        
-        const uid_ = obj[i].uid;
-        const _name = obj[i].nome;
-
-        new_data['uid'] = uid_;
-        new_data['name'] = _name;
-
-        historico.push(new_data);
-
-    }
-
-    const historicoJson = JSON.stringify(historico);
-    console.log(historicoJson);
-    res.send(historicoJson);
-
-});
 
 //Rotas das residências
 app.get('/residencias', async (_req, res) => {
@@ -337,7 +269,7 @@ app.put('/cartoes/:id', async (req, res) => {
   try {
     const cartoes = await Cartoes.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.send(cartoes);
-    
+
   } catch (error) {
     res.status(500).send(error);
   }
