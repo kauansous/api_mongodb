@@ -28,7 +28,7 @@ const Residente = mongoose.model('residentes', {
   email: String,
   telefone: String,
   contato_emergencia_nome: String,
-  conteto_emergencia_parentesco: String,
+  contato_emergencia_parentesco: String,
   contato_emergencia_telefone: String,
   rua: String,
   numero: String,
