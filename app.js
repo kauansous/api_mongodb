@@ -102,7 +102,7 @@ app.get('/residencias', async (_req, res) => {
 });
 
 
-app.post('/residencias', async (req, res) => {
+app.post('/post_residencias', async (req, res) => {
   try {
     const residencia = new Residencia(req.body);
     await residencia.save();
