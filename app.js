@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-var crypto = require('crypto');
-
-const app = express();
-app.use(bodyParser.json({ type: 'application/json' }));
-app.use(cors());
 
 // definindo o modelo Residencia
 const Residencia = mongoose.model('residencias', {
@@ -80,20 +75,16 @@ const Cartoes = mongoose.model('cartoes', {
   }]
 });
 
+const app = express();
+app.use(bodyParser.json({ type: 'application/json' }));
+app.use(cors());
 
-const url = "mongodb+srv://Kauan_Prog:Kauandbs159753.@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority";
+const db_string = "mongodb+srv://Kauan_Prog:Kauandbs159753.@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority";
 
-mongoose.connect(url, {
+mongoose.connect(db_string, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-function encryptText(text) {
-  var mykey = crypto.createCipheriv('aes-128-cbc', 'E5CA8DF0283275DEB5BD05E7BAE6969C2A8A1E3D2AA00CBDC240674C9B7C94CA');
-  var mystr = mykey.update(text, 'utf8', 'hex');
-  mystr += mykey.final('hex');
-  return mystr;
-}
 
 //Rotas das residências
 app.get('/residencias', async (_req, res) => {
@@ -155,7 +146,6 @@ app.get('/residentes', async (_req, res) => {
 
 app.post('/residentes', async (req, res) => {
   try {
-    req.body.uid = encryptText(req.body.uid);
     const residentes = new Residente(req.body);
     await residentes.save();
     res.send(residentes);
@@ -262,7 +252,6 @@ app.get('/cartoes', async (_req, res) => {
 
 app.post('/cartoes', async (req, res) => {
   try {
-    req.body.uid = encryptText(req.body.uid);
     const cartoes = new Cartoes(req.body);
     await cartoes.save();
     res.send(cartoes);
