@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+require('dotenv').config();
 
 // definindo o modelo Residencia
 const Residencia = mongoose.model('residencias', {
@@ -79,11 +80,14 @@ const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(cors());
 
-const db_string = "mongodb+srv://Kauan_Prog:Kauandbs159753.@garu.fwrnoix.mongodb.net/test?retryWrites=true&w=majority";
+const db_string = `${process.env.MONGO_URL}`;
 
 mongoose.connect(db_string, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(() => {
+  // Conexão bem-sucedida
+  console.log('Conexão com o banco de dados estabelecida');
 });
 
 //Rotas das residências
