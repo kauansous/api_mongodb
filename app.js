@@ -63,8 +63,9 @@ const Visitante = mongoose.model('visitantes', {
 
 //definindo o modelo funcionário
 const Funcionario = mongoose.model('funcionarios', {
+  nome: String,
+  usuario: String,
   senha: String,
-  usuario: String
 });
 
 
