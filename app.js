@@ -46,6 +46,7 @@ const Residente = mongoose.model('residentes', {
   historico_data: [String],
   historico_sentido: [String],
   historico_permissao: [String],
+  ausencias: String,
 })
 
 //definindo o modelo visitante
@@ -91,6 +92,11 @@ mongoose.connect(db_string, {
   console.log('Conexão com o banco de dados estabelecida');
 });
 
+//Rota inicial
+app.get("/", (_, res) => {
+  res.send("API para realizar a comunicação entre o sistema web e o banco de dados");
+});
+
 //Rotas das residências
 app.get('/residencias', async (_req, res) => {
   try {
@@ -100,7 +106,6 @@ app.get('/residencias', async (_req, res) => {
     res.status(500).send(error);
   }
 });
-
 
 app.post('/residencias', async (req, res) => {
   try {
