@@ -16,7 +16,8 @@ const Residencia = mongoose.model('residencias', {
   cep: String,
   cidade: String,
   estado: String,
-  status: String
+  status: String,
+  last_active: String
 });
 
 //definindo o modelo Residente
@@ -67,6 +68,15 @@ const Funcionario = mongoose.model('funcionarios', {
   nome: String,
   usuario: String,
   senha: String,
+  email: String,
+  permissao: String,
+  operacoes: [{
+    tipo: String,
+    nome: String,
+    data: String,
+    hora: String,
+    atividade: String
+  }]
 });
 
 
@@ -243,6 +253,44 @@ app.delete('/visitantes/:id', async (req, res) => {
 app.get('/funcionarios', async (_req, res) => {
   try {
     const funcionarios = await Funcionario.find();
+    res.send(funcionarios);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.post('/funcionarios', async (req, res) => {
+  try {
+    const funcionarios = new Funcionario(req.body);
+    await funcionarios.save();
+    res.send(funcionarios);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.put('/funcionarios/:id', async (req, res) => {
+  try {
+    const funcionarios = await Funcionario.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.send(funcionarios);
+
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.patch('/funcionarios/:id', async (req, res) => {
+  try {
+    const funcionarios = await Funcionario.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.send(funcionarios);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.delete('/funcionarios/:id', async (req, res) => {
+  try {
+    const funcionarios = await Funcionario.findByIdAndDelete(req.params.id);
     res.send(funcionarios);
   } catch (error) {
     res.status(500).send(error);
